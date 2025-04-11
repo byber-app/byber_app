@@ -12,13 +12,17 @@ export class AuthGuard implements CanActivate {
 
     // Authorization başlığından tokeni əldə edir
     const token = request.headers['authorization']?.split(' ')[1];
+    console.log(token);
+    
     if (!token) {
       throw new UnauthorizedException('Token mövcud deyil'); // Əgər token yoxdursa, xəta qaytarır
     }
 
     try {
       // Tokeni yoxlayır və istifadəçi məlumatlarını çıxarır
-      const decoded = this.jwtService.verify<User>(token);
+      const decoded = this.jwtService.verify<User>(token, {
+        secret: process.env.JWT_SECRET, // Tokenin doğruluğunu yoxlayır
+      }); // Tokeni deşifrə edir      
       request.user = decoded; // İstifadəçi məlumatlarını sorğu obyektinə əlavə edir
     } catch (error) {
       throw new UnauthorizedException('Token düzgün deyil'); // Əgər token etibarsızdırsa, xəta qaytarır

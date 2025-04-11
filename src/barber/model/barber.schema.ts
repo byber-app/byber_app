@@ -93,6 +93,9 @@ export class Barber {
 
     @Prop({ required: true, ref: "reserve" })
     reserveIds: mongoose.Schema.Types.ObjectId[];
+
+    @Prop({ required: true, default: "barber" })
+    role: string
 }
 
 export const BarberModel = SchemaFactory.createForClass(Barber);

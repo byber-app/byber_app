@@ -68,7 +68,7 @@ export class AuthService {
     }
 
     // Token yaradır
-    const accessToken = this.jwtService.sign({ _id: user._id, email: user.email }, { secret: process.env.JWT_SECRET, expiresIn: "4h" });
+    const accessToken = this.jwtService.sign({ _id: user._id, email: user.email, role: user.role }, { secret: process.env.JWT_SECRET, expiresIn: "4h" });
     return { accessToken, message: "Giriş uğurla tamamlandı..." };
   }
 
@@ -85,11 +85,11 @@ export class AuthService {
       const newUser = await this.userModel.create({
         email, name, surname, profile_photo, password: hashedPassword
       });
-      const accessToken = this.jwtService.sign({ _id: newUser._id, email: newUser.email }, { secret: process.env.JWT_SECRET, expiresIn: "4h" });
+      const accessToken = this.jwtService.sign({ _id: newUser._id, email: newUser.email, role: newUser.role }, { secret: process.env.JWT_SECRET, expiresIn: "4h" });
       return { accessToken, message: "Google ilə qeydiyyat uğurla tamamlandı..." };
     } else {
       // Token yaradır
-      const accessToken = this.jwtService.sign({ id: existingUser._id, email: existingUser.email }, { secret: process.env.JWT_SECRET, expiresIn: "4h" });
+      const accessToken = this.jwtService.sign({ id: existingUser._id, email: existingUser.email, role: existingUser.role }, { secret: process.env.JWT_SECRET, expiresIn: "4h" });
       return { accessToken, message: "Google ilə giriş uğurla tamamlandı..." };
     }
   }
@@ -128,7 +128,7 @@ export class AuthService {
       throw new UnauthorizedException('Şifrə yanlışdır.');
     }
     // Token yaradır
-    const accessToken = this.jwtService.sign({ _id: barber._id, email: barber.email }, { secret: process.env.JWT_SECRET, expiresIn: "4h" });
+    const accessToken = this.jwtService.sign({ _id: barber._id, email: barber.email, role: barber.role }, { secret: process.env.JWT_SECRET, expiresIn: "4h" });
     return { accessToken, message: "Giriş uğurla tamamlandı..." };
   }
 
@@ -140,7 +140,7 @@ export class AuthService {
     const user = await this.userModel.findOne({ email: email });
     const barber = await this.barberModel.findOne({ email: email });
     console.log(user);
-    
+
     if (user) {
       // Təsdiq kodunu yaradır və email-ə göndərir
       const verificationCode = Math.floor(Math.random() * 10000);  // 4 rəqəmli təsdiq kodu yaradır
@@ -170,7 +170,7 @@ export class AuthService {
       // İstifadəçi tapılmadısa, xəta atır
       throw new BadRequestException('Bu email ilə istifadəçi tapılmadı.');
     }
-    
+
   }
 
 
