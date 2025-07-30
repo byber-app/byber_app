@@ -25,6 +25,7 @@ export class AuthService {
     @InjectModel(Verify.name) private readonly verifyModel: Model<Verify>,
     private readonly jwtService: JwtService, private readonly mailerService: MailerService) { }
 
+    // İstifadəçi qeydiyyatı funksiyası
   async userSignup(userSignUpData: UserSignUpDto, file: Express.Multer.File): Promise<messageResponse> {
     const { email, password, phone_num, ...rest } = userSignUpData;
     console.log(rest);

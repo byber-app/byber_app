@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 
 @Schema({ versionKey: false, timestamps: true })
 export class User {
-    @Prop({ type: mongoose.Schema.Types.ObjectId, auto: true })
     _id: mongoose.Schema.Types.ObjectId;
 
     @Prop({ required: true })
