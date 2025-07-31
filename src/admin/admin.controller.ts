@@ -1,7 +1,7 @@
 import { Body, Controller, HttpCode, HttpStatus, Post, UploadedFile, UseGuards } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AdvertisementDto } from 'src/advertisement/dto/advertisement.dto';
+import { AdvertisementDto } from 'src/advertisement/dto/create-advertisement.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 
 
