@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose from "mongoose";
 
 @Schema({ timestamps: true, versionKey: false })
-export class Advertisement {
+export class Advertisement extends mongoose.Document {
 
     @Prop({ required: true })
     byberId: mongoose.Schema.Types.ObjectId;

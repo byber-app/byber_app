@@ -3,14 +3,24 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { AdvertisementDto } from 'src/advertisement/dto/create-advertisement.dto';
 import { Advertisement } from 'src/advertisement/model/advertisement.schema';
+import { Barber } from 'src/barber/model/barber.schema';
 import cloudinary from 'src/config/cloudinary.config';
+import { CreateServiceDto } from 'src/service/dto/create-service.dto';
+import { UpdateServiceDto } from 'src/service/dto/update-service.dto';
+import { Service } from 'src/service/model/service.schema';
+import { User } from 'src/user/model/user.schema';
 
 @Injectable()
 export class AdminService {
   constructor(
-    @InjectModel(Advertisement.name)
-    private advertisementModel: Model<Advertisement>,
-  ) {}
+    @InjectModel(Advertisement.name) private advertisementModel: Model<Advertisement>,
+    @InjectModel(Service.name) private serviceModel: Model<Service>,
+    @InjectModel(Barber.name) private barberModel: Model<Barber>,
+    @InjectModel(User.name) private userModel: Model<User>, 
+  ) { }
+
+
+  // --------------------- Reklam metodları---------------------//
 
   // Yeni reklam yaratmaq üçün metod
   async createAdvertisement(
@@ -69,4 +79,86 @@ export class AdminService {
     }
     return advertisement;
   }
+
+
+
+  // --------------------- Xidmət metodları---------------------//
+
+
+  // Yeni xidmət yaratmaq üçün metod
+  async createService(serviceData: CreateServiceDto, photo: Express.Multer.File): Promise<{ message: string; service: Service }> {
+    // Ada göre xidmətin olub olmadığını yoxlamaq
+    const existingService = await this.serviceModel.findOne({ name: serviceData.name });
+    if (existingService) {
+      throw new Error('Bu adda xidmət artıq mövcuddur');
+    }
+    // Foto cloudinary yükləmə üçün
+    const photoUrl = await cloudinary.uploader.upload(photo.path, {
+      public_id: photo.originalname,
+    });
+    const newService = await this.serviceModel.create({
+      ...serviceData,
+      photo: photoUrl.secure_url,
+    });
+    return {
+      message: 'Xidmət uğurla yaradıldı',
+      service: newService,
+    };
+  }
+
+
+  //Xidmətdə dəyişiklik etmək üçün metod
+  async updateService(_id: string, serviceData: UpdateServiceDto, photo?: Express.Multer.File): Promise<{ message: string }> {
+    const service = await this.serviceModel.findById(_id);
+    if (!service) {
+      throw new Error('Xidmət tapılmadı');
+    }
+    if (photo) {
+      // Köhnə foto varsa, onu silmək
+      if (service.photo) {
+        const publicId = service.photo.split('/').pop()?.split('.')[0];
+        if (publicId) {
+          await cloudinary.uploader.destroy(publicId);
+        }
+      }
+
+      // Foto cloudinary yükləmə üçün
+      const photoUrl = await cloudinary.uploader.upload(photo.path, { public_id: photo.originalname });
+      service.photo = photoUrl.secure_url;
+    }
+    await this.serviceModel.findByIdAndUpdate(_id, { ...serviceData, photo: service.photo }, { new: true });
+    return { message: 'Xidmət uğurla yeniləndi' };
+  }
+
+
+  // Xidməti ID görə əldə etmək üçün metod
+  async getServiceById(_id: string): Promise<Service> {
+    const service = await this.serviceModel.findById(_id);
+    if (!service) {
+      throw new Error('Xidmət tapılmadı');
+    }
+    return service;
+  }
+
+
+
+  // Bütün xidmətləri əldə etmək üçün metod
+  async getAllServices(): Promise<Service[]> {
+    return await this.serviceModel.find();
+  }
+
+
+  // --------------------- İstifadəçi və Bərbər statistikası---------------------//
+
+  // Bərbər istifadəçilərin sayını əldə etmək üçün metod
+  async getBarberCount(): Promise<number> {
+    return await this.barberModel.find().countDocuments();
+  }
+
+  
+  // Adi istifadəçilərin sayını əldə etmək üçün metod
+  async getUserCount(): Promise<number> {
+    return await this.userModel.find().countDocuments();
+  }
+
 }
