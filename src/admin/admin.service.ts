@@ -5,9 +5,11 @@ import { AdvertisementDto } from 'src/advertisement/dto/create-advertisement.dto
 import { Advertisement } from 'src/advertisement/model/advertisement.schema';
 import { Barber } from 'src/barber/model/barber.schema';
 import cloudinary from 'src/config/cloudinary.config';
+import { CreateNotificationDto } from 'src/notification/dto/create-notification.dto';
 import { CreateServiceDto } from 'src/service/dto/create-service.dto';
 import { UpdateServiceDto } from 'src/service/dto/update-service.dto';
 import { Service } from 'src/service/model/service.schema';
+import { Support } from 'src/support/model/support.schema';
 import { User } from 'src/user/model/user.schema';
 
 @Injectable()
@@ -16,7 +18,9 @@ export class AdminService {
     @InjectModel(Advertisement.name) private advertisementModel: Model<Advertisement>,
     @InjectModel(Service.name) private serviceModel: Model<Service>,
     @InjectModel(Barber.name) private barberModel: Model<Barber>,
-    @InjectModel(User.name) private userModel: Model<User>, 
+    @InjectModel(User.name) private userModel: Model<User>,
+    @InjectModel(Support.name) private supportModel: Model<Support>,
+    @InjectModel(Notification.name) private notificationModel: Model<Notification>,
   ) { }
 
 
@@ -148,6 +152,44 @@ export class AdminService {
   }
 
 
+
+// --------------------- Dəstək metodları---------------------//
+
+
+// Dəstəyi ID görə əldə etmək üçün metod
+  async getSupportById(_id: string): Promise<Support> {
+    const support = await this.supportModel.findById(_id);
+    if (!support) {
+      throw new Error('Dəstək tapılmadı');
+    }
+    return support;
+  }
+
+
+  // Bütün dəstəkləri əldə etmək üçün metod
+  async getAllSupports(): Promise<Support[]> {
+    return await this.supportModel.find();
+  }
+
+
+
+ // ---------------------  Bildiriş metodları---------------------//
+
+
+  // Yeni bildiriş yaratmaq üçün metod
+  async createNotification(notificationData: CreateNotificationDto): Promise<Notification> {
+    const newNotification = await this.notificationModel.create(notificationData);
+    return newNotification;
+  }
+
+
+  // Bütün gönd əldə etmək üçün metod
+  async getAllNotifications(): Promise<Notification[]> {
+    return await this.notificationModel.find();
+  }
+
+  
+
   // --------------------- İstifadəçi və Bərbər statistikası---------------------//
 
   // Bərbər istifadəçilərin sayını əldə etmək üçün metod
@@ -160,5 +202,6 @@ export class AdminService {
   async getUserCount(): Promise<number> {
     return await this.userModel.find().countDocuments();
   }
+
 
 }

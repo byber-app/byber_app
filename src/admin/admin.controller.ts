@@ -7,6 +7,7 @@ import { Advertisement } from 'src/advertisement/model/advertisement.schema';
 import { CreateServiceDto } from 'src/service/dto/create-service.dto';
 import { UpdateServiceDto } from 'src/service/dto/update-service.dto';
 import { Service } from 'src/service/model/service.schema';
+import { Support } from 'src/support/model/support.schema';
 
 
 @ApiTags('admin')
@@ -120,7 +121,29 @@ export class AdminController {
   }
 
 
-  // --------------------- İstifadəçi və Bərbər statistikası---------------------//
+  // --------------------- Dəstək metodları---------------------//
+
+
+  @ApiOperation({summary:"Dəstək sorğularını əldə etmək"})
+  @UseGuards(AuthGuard) // AuthGuard istifadə edərək admin yoxlaması
+  @Get('dashboard/supports')
+  @HttpCode(HttpStatus.OK)
+  async getAllSupports(): Promise<Support[]> {
+    return this.adminService.getAllSupports();
+  }
+
+
+  @ApiOperation({ summary: 'Dəstək sorğusunu ID ilə əldə etmək' })
+  @UseGuards(AuthGuard) // AuthGuard istifadə edərək admin yoxlaması
+  @Get('dashboard/support/:id')
+  @HttpCode(HttpStatus.OK)
+  async getSupportById(@Param('id') _id: string): Promise<Support> {
+    return this.adminService.getSupportById(_id);
+  }
+
+
+
+    // --------------------- İstifadəçi və Bərbər statistikası---------------------//
 
   @ApiOperation({ summary: 'Bərbər istifadəçilərin sayını əldə etmək' })
   @UseGuards(AuthGuard) // AuthGuard istifadə edərək admin yoxlaması  
