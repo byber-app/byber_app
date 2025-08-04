@@ -6,6 +6,7 @@ import { Advertisement } from 'src/advertisement/model/advertisement.schema';
 import { Barber } from 'src/barber/model/barber.schema';
 import cloudinary from 'src/config/cloudinary.config';
 import { CreateNotificationDto } from 'src/notification/dto/create-notification.dto';
+import { Notification } from 'src/notification/model/notification.schema';
 import { CreateServiceDto } from 'src/service/dto/create-service.dto';
 import { UpdateServiceDto } from 'src/service/dto/update-service.dto';
 import { Service } from 'src/service/model/service.schema';

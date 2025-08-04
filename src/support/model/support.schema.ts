@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import mongoose from "mongoose";
+import { Document } from "mongoose";
 
 @Schema({ timestamps: true, versionKey: false })
-export class Support extends mongoose.Document {
+export class Support extends Document {
   @Prop({ required: true })
   title: string;
 

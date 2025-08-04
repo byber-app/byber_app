@@ -8,7 +8,7 @@ import { Service, ServiceModel } from 'src/service/model/service.schema';
 import { Barber, BarberModel } from 'src/barber/model/barber.schema';
 import { User, userModel } from 'src/user/model/user.schema';
 import { Support, SupportModel } from 'src/support/model/support.schema';
-import { NotificationModel } from 'src/notification/model/notification.schema';
+import { Notification, NotificationModel } from 'src/notification/model/notification.schema';
 
 @Module({
   imports: [MongooseModule.forFeature([
