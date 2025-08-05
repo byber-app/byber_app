@@ -25,7 +25,7 @@ export class AuthService {
     @InjectModel(Verify.name) private readonly verifyModel: Model<Verify>,
     private readonly jwtService: JwtService, private readonly mailerService: MailerService) { }
 
-    // İstifadəçi qeydiyyatı funksiyası
+  // İstifadəçi qeydiyyatı funksiyası
   async userSignup(userSignUpData: UserSignUpDto, file: Express.Multer.File): Promise<messageResponse> {
     const { email, password, phone_num, ...rest } = userSignUpData;
     console.log(rest);
@@ -101,15 +101,24 @@ export class AuthService {
     if (userExists) {
       throw new BadRequestException('Bu email və ya nömrə artıq istifadə olunur.');
     }
+    // kateqoriyaları seçir
+    if (!barberSignUpData.categories || barberSignUpData.categories.length === 0) {
+      throw new BadRequestException('Kateqoriyalar boş ola bilməz.');
+    }
+    // Kateqoriyalar əlavə olunur
+    let categories: string[] = []
+    categories.push(...barberSignUpData.categories);
+    barberSignUpData.categories = categories.join("").split(",")
+    // Şəkil olmadan qeydiyyat
     if (!file) {
       const hashedPassword = await bcrypt.hash(barberSignUpData.password, 10);
-      await this.barberModel.create({ ...barberSignUpData, password: hashedPassword });
+      await this.barberModel.create({ ...barberSignUpData, categories: barberSignUpData.categories, password: hashedPassword });
       return { message: "Qeydiyyat uğurla tamamlandı..." };
     }
-    // Şəkli Cloudinary-ə yükləyir
+    // Şəkili Cloudinary-ə yükləyir
     const imageData = await cloudinary.uploader.upload(file.path, { public_id: file.originalname });
     const hashedPassword = await bcrypt.hash(barberSignUpData.password, 10);
-    await this.barberModel.create({ ...barberSignUpData, password: hashedPassword, profile_photo: imageData.secure_url });
+    await this.barberModel.create({ ...barberSignUpData, categories: barberSignUpData.categories, password: hashedPassword, profile_photo: imageData.secure_url });
     return { message: "Qeydiyyat uğurla tamamlandı..." };
   }
 

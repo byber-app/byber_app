@@ -99,6 +99,7 @@ export class AuthController {
         password: { type: 'string', example: 'password123' },
         phone_num: { type: 'string', example: '+994501234567' },
         gender: { type: 'string', example: 'male' },
+        categories: { type: 'array', items: { type: 'string' }, example: ['haircut', 'shave'] }, // Bərbərin kateqoriyaları
         address: { type: 'string', example: '123 Main St' },
         shop_name: { type: 'string', example: 'Barber Shop' },
         location: { type: 'string', example: 'Baku' },

@@ -112,7 +112,7 @@ export class AdminService {
   }
 
 
-  //Xidmətdə dəyişiklik etmək üçün metod
+  // Xidmətdə dəyişiklik etmək üçün metod
   async updateService(_id: string, serviceData: UpdateServiceDto, photo?: Express.Multer.File): Promise<{ message: string }> {
     const service = await this.serviceModel.findById(_id);
     if (!service) {
@@ -154,10 +154,18 @@ export class AdminService {
 
 
 
-// --------------------- Dəstək metodları---------------------//
+  // --------------------- Alt xidmət metodları---------------------//
 
 
-// Dəstəyi ID görə əldə etmək üçün metod
+
+
+
+
+
+  // --------------------- Dəstək metodları---------------------//
+
+
+  // Dəstəyi ID görə əldə etmək üçün metod
   async getSupportById(_id: string): Promise<Support> {
     const support = await this.supportModel.findById(_id);
     if (!support) {
@@ -174,22 +182,22 @@ export class AdminService {
 
 
 
- // ---------------------  Bildiriş metodları---------------------//
+  // ---------------------  Bildiriş metodları---------------------//
 
 
   // Yeni bildiriş yaratmaq üçün metod
   async createNotification(notificationData: CreateNotificationDto): Promise<Notification> {
-    const newNotification = await this.notificationModel.create(notificationData);
+    const newNotification = await this.notificationModel.create(notificationData); // Yeni bildiriş yaradılır.
     return newNotification;
   }
 
 
-  // Bütün gönd əldə etmək üçün metod
+  // Bütün bildirişləri əldə etmək üçün metod
   async getAllNotifications(): Promise<Notification[]> {
     return await this.notificationModel.find();
   }
 
-  
+
 
   // --------------------- İstifadəçi və Bərbər statistikası---------------------//
 
@@ -198,7 +206,7 @@ export class AdminService {
     return await this.barberModel.find().countDocuments();
   }
 
-  
+
   // Adi istifadəçilərin sayını əldə etmək üçün metod
   async getUserCount(): Promise<number> {
     return await this.userModel.find().countDocuments();

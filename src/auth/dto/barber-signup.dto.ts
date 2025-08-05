@@ -41,6 +41,10 @@ export class BarberSignUpDto {
     gender: string;
 
     @ApiProperty()
+    @IsString({ each: true })
+    categories: string[];
+
+    @ApiProperty()
     @IsString()
     @IsNotEmpty({ message: 'Ünvan boş ola bilməz.' })
     address: string;

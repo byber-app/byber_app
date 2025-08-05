@@ -32,6 +32,9 @@ export class Barber {
     gender: string;
 
     @Prop({ required: true })
+    categories: string[];
+
+    @Prop({ required: true })
     address: string;
 
     @Prop({ required: true })
