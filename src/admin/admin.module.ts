@@ -9,6 +9,7 @@ import { Barber, BarberModel } from 'src/barber/model/barber.schema';
 import { User, userModel } from 'src/user/model/user.schema';
 import { Support, SupportModel } from 'src/support/model/support.schema';
 import { Notification, NotificationModel } from 'src/notification/model/notification.schema';
+import { Subservice, subserviceModel } from 'src/subservice/model/subservice.schema';
 
 @Module({
   imports: [MongooseModule.forFeature([
@@ -17,7 +18,8 @@ import { Notification, NotificationModel } from 'src/notification/model/notifica
     { name: Barber.name, schema: BarberModel },
     { name: User.name, schema: userModel },
     { name: Support.name, schema: SupportModel },
-    { name: Notification.name, schema: NotificationModel }
+    { name: Notification.name, schema: NotificationModel },
+    { name: Subservice.name, schema: subserviceModel }
   ])],
   controllers: [AdminController],
   providers: [AdminService],

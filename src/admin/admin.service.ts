@@ -10,6 +10,7 @@ import { Notification } from 'src/notification/model/notification.schema';
 import { CreateServiceDto } from 'src/service/dto/create-service.dto';
 import { UpdateServiceDto } from 'src/service/dto/update-service.dto';
 import { Service } from 'src/service/model/service.schema';
+import { Subservice } from 'src/subservice/model/subservice.schema';
 import { Support } from 'src/support/model/support.schema';
 import { User } from 'src/user/model/user.schema';
 
@@ -22,6 +23,7 @@ export class AdminService {
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(Support.name) private supportModel: Model<Support>,
     @InjectModel(Notification.name) private notificationModel: Model<Notification>,
+    @InjectModel(Subservice.name) private subserviceModel: Model<Subservice>
   ) { }
 
 
@@ -91,19 +93,14 @@ export class AdminService {
 
 
   // Yeni xidmət yaratmaq üçün metod
-  async createService(serviceData: CreateServiceDto, photo: Express.Multer.File): Promise<{ message: string; service: Service }> {
+  async createService(serviceData: CreateServiceDto): Promise<{ message: string; service: Service }> {
     // Ada göre xidmətin olub olmadığını yoxlamaq
     const existingService = await this.serviceModel.findOne({ name: serviceData.name });
     if (existingService) {
       throw new Error('Bu adda xidmət artıq mövcuddur');
     }
-    // Foto cloudinary yükləmə üçün
-    const photoUrl = await cloudinary.uploader.upload(photo.path, {
-      public_id: photo.originalname,
-    });
     const newService = await this.serviceModel.create({
-      ...serviceData,
-      photo: photoUrl.secure_url,
+      ...serviceData
     });
     return {
       message: 'Xidmət uğurla yaradıldı',
@@ -113,25 +110,12 @@ export class AdminService {
 
 
   // Xidmətdə dəyişiklik etmək üçün metod
-  async updateService(_id: string, serviceData: UpdateServiceDto, photo?: Express.Multer.File): Promise<{ message: string }> {
+  async updateService(_id: string, serviceData: UpdateServiceDto): Promise<{ message: string }> {
     const service = await this.serviceModel.findById(_id);
     if (!service) {
       throw new Error('Xidmət tapılmadı');
     }
-    if (photo) {
-      // Köhnə foto varsa, onu silmək
-      if (service.photo) {
-        const publicId = service.photo.split('/').pop()?.split('.')[0];
-        if (publicId) {
-          await cloudinary.uploader.destroy(publicId);
-        }
-      }
-
-      // Foto cloudinary yükləmə üçün
-      const photoUrl = await cloudinary.uploader.upload(photo.path, { public_id: photo.originalname });
-      service.photo = photoUrl.secure_url;
-    }
-    await this.serviceModel.findByIdAndUpdate(_id, { ...serviceData, photo: service.photo }, { new: true });
+    await this.serviceModel.findByIdAndUpdate(_id, { ...serviceData }, { new: true });
     return { message: 'Xidmət uğurla yeniləndi' };
   }
 
@@ -144,7 +128,6 @@ export class AdminService {
     }
     return service;
   }
-
 
 
   // Bütün xidmətləri əldə etmək üçün metod

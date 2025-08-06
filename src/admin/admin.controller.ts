@@ -75,22 +75,20 @@ export class AdminController {
   // --------------------- Xidmət metodları---------------------//
 
   @ApiOperation({ summary: "Xidmət yaratmaq" })
-  @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
       type: "object", properties: {
         name: { type: 'string', description: 'Xidmət adı', example: 'Xidmətin adı' },
         description: { type: 'string', description: 'Xidmət təsviri', example: 'Xidmətin təsviri' },
-        price: { type: 'number', description: 'Xidmət qiyməti', example: 100 },
-        photo: { type: 'string', format: 'binary', description: 'Xidmət üçün foto', },
+        price: { type: 'number', description: 'Xidmət qiyməti', example: 100 }
       }
     }
   })
   @UseGuards(AuthGuard) // AuthGuard istifadə edərək admin yoxlaması
   @Post('dashboard/service')
   @HttpCode(HttpStatus.CREATED)
-  async createService(@Body() serviceData: CreateServiceDto, @UploadedFile() photo: Express.Multer.File) {
-    return this.adminService.createService(serviceData, photo);
+  async createService(@Body() serviceData: CreateServiceDto) {
+    return this.adminService.createService(serviceData);
   }
 
 
@@ -98,8 +96,8 @@ export class AdminController {
   @UseGuards(AuthGuard) // AuthGuard istifadə edərək admin yoxlaması  
   @Patch('dashboard/service/:id')
   @HttpCode(HttpStatus.OK)
-  async updateService(@Param('id') _id: string, @Body() serviceData: UpdateServiceDto, @UploadedFile() photo: Express.Multer.File) {
-    return this.adminService.updateService(_id, serviceData, photo);
+  async updateService(@Param('id') _id: string, @Body() serviceData: UpdateServiceDto) {
+    return this.adminService.updateService(_id, serviceData);
   }
 
 

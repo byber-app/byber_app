@@ -12,8 +12,6 @@ export class Service extends mongoose.Document {
   @Prop({ required: true })
   gender: string;
 
-  @Prop({required:true})
-  photo: string;
 }
 
 export const ServiceModel = SchemaFactory.createForClass(Service);
