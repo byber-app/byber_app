@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document } from "mongoose";
+import mongoose, { Document } from "mongoose";
 
 @Schema({ versionKey: false, timestamps: true })
 export class Subservice extends Document {
     @Prop({ required: true })
-    serviceId: string;
+    serviceId: mongoose.Schema.Types.ObjectId;
     @Prop({ required: true })
     name: string;
     @Prop({ required: true })
@@ -13,4 +13,4 @@ export class Subservice extends Document {
     active: boolean;
 }
 
-export const subserviceModel =SchemaFactory.createForClass(Subservice);
+export const subserviceModel = SchemaFactory.createForClass(Subservice);
