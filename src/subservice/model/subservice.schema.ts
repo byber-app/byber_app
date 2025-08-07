@@ -4,6 +4,8 @@ import { Document } from "mongoose";
 @Schema({ versionKey: false, timestamps: true })
 export class Subservice extends Document {
     @Prop({ required: true })
+    serviceId: string;
+    @Prop({ required: true })
     name: string;
     @Prop({ required: true })
     photo: string;

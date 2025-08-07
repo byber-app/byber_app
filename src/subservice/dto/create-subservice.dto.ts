@@ -5,6 +5,10 @@ export class CreateSubserviceDto {
     @ApiProperty()
     @IsString()
     @IsNotEmpty()
+    serviceId: string;
+    @ApiProperty()
+    @IsString()
+    @IsNotEmpty()
     name: string;
     @ApiProperty()
     @IsOptional()

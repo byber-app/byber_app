@@ -10,6 +10,8 @@ import { Notification } from 'src/notification/model/notification.schema';
 import { CreateServiceDto } from 'src/service/dto/create-service.dto';
 import { UpdateServiceDto } from 'src/service/dto/update-service.dto';
 import { Service } from 'src/service/model/service.schema';
+import { CreateSubserviceDto } from 'src/subservice/dto/create-subservice.dto';
+import { UpdateSubserviceDto } from 'src/subservice/dto/update-subservice.dto';
 import { Subservice } from 'src/subservice/model/subservice.schema';
 import { Support } from 'src/support/model/support.schema';
 import { User } from 'src/user/model/user.schema';
@@ -139,9 +141,79 @@ export class AdminService {
 
   // --------------------- Alt xidmət metodları---------------------//
 
+  
+ // Yeni alt xidmət yaratmaq üçün metod
+  async createSubservice(subserviceData: CreateSubserviceDto, photo:Express.Multer.File): Promise<{ message: string; subservice: Subservice }> {
+    // Eyni adda alt xidmət olub olmadığını yoxla
+    const existingSubservice = await this.subserviceModel.findOne({ name: subserviceData.name });
+    if (existingSubservice) {
+      throw new Error('Bu adda alt xidmət artıq mövcuddur');
+    }
+    // Foto cloudinary yükləmə üçün
+    const photoUrl = await cloudinary.uploader.upload(photo.path, { 
+      public_id: photo.originalname,
+    });
+
+    const newSubservice = await this.subserviceModel.create({
+      ...subserviceData,
+      photo: photoUrl.secure_url, // Foto URL əlavə edilir
+    });
+    return {
+      message: 'Alt xidmət uğurla yaradıldı',
+      subservice: newSubservice,
+    };
+  }
+
+
+  // Alt xidmətdə dəyişiklik etmək üçün metod
+  async updateSubservice(_id: string, subserviceData: UpdateSubserviceDto, photo: Express.Multer.File): Promise<{ message: string }> {
+    const subservice = await this.subserviceModel.findById(_id);
+    if (!subservice) {
+      throw new Error('Alt xidmət tapılmadı');
+    }
+    // Əgər yeni foto varsa, köhnə foto silinir və yenisi yüklənir  
+    if (photo) {
+      // Köhnə foto URL-i əldə et
+      const oldPhotoUrl = subservice.photo;
+      // Cloudinary-dən köhnə foto silinir
+      const oldPhotoFileName = oldPhotoUrl.split('/').pop();
+      if (oldPhotoFileName) {
+        await cloudinary.uploader.destroy(oldPhotoFileName.split('.')[0]);
+      }
+      // Yeni foto yüklənir
+      const newPhotoUrl = await cloudinary.uploader.upload(photo.path, {
+        public_id: photo.originalname,
+      });
+    
+      // Alt xidmət yenilənir
+    await this.subserviceModel.findByIdAndUpdate(_id, { ...subserviceData, photo : newPhotoUrl.secure_url }, { new: true });
+    return { message: 'Alt xidmət uğurla yeniləndi' };
+    }
+    // Əgər yeni foto yoxdursa, sadəcə alt xidmət məlumatları yenilənir
+    await this.subserviceModel.findByIdAndUpdate(_id, { ...subserviceData }, { new: true });
+    return { message: 'Alt xidmət uğurla yeniləndi' };
+  }
 
 
 
+  // Alt xidməti ID görə əldə etmək üçün metod
+  async getSubserviceById(_id: string): Promise<Subservice> {
+    const subservice = await this.subserviceModel.findById(_id);
+    if (!subservice) {
+      throw new Error('Alt xidmət tapılmadı');
+    }
+    return subservice;
+  }
+
+
+
+  // Bütün aktiv , passiv və ya bütün alt xidmətləri əldə etmək üçün metod
+  async getAllSubservices(active : boolean): Promise<Subservice[]> {
+    let query = {};
+    if (active === true) query = { active: true };
+    active === false ? (query = { active: false }) : null;
+    return await this.subserviceModel.find(query);
+  }
 
 
 
