@@ -42,4 +42,15 @@ export class BarberService {
     }
 
 
+
+    // Ümumi xidmətləri əldə etmək üçün metod
+    // Bərbər xidməti özündən deaktiv edə bilər
+    // Bərbərləri görə bilir
+    // Bərbər öz və digər bərbərlərin profilini görə bilir
+    // Bərbər xidmət növünə uyğun axtarış edə bilir məsələn: saç, saqqal, üz baxımı və s.
+    // Filter edə bilir kateqoriya,reytinq və məsafə
+
+
+
+
 }
