@@ -6,17 +6,28 @@ import { CreateSelectedServiceDto } from 'src/selected services/dto/create-selec
 import { SelectedService } from 'src/selected services/model/selected-service.schema';
 import { tokenRequestBarberType } from './tokenReqType';
 import { UpdateSelectedServiceDto } from 'src/selected services/dto/update-selected-service.dto';
+import { Service, ServiceModel } from 'src/service/model/service.schema';
+import { messageResponse } from 'src/auth/auth_type';
+import { Barber } from './model/barber.schema';
 
 @Injectable()
 export class BarberService {
     constructor(@Inject(REQUEST) private readonly barber: tokenRequestBarberType,
-        @InjectModel(SelectedService.name) private readonly selectedServiceModel: Model<SelectedService>
+        @InjectModel(SelectedService.name) private readonly selectedServiceModel: Model<SelectedService>,
+        @InjectModel(Service.name) private readonly serviceModel: Model<Service>,
+        @InjectModel(Barber.name) private readonly barberModel: Model<Barber>,
     ) { }
 
 
     // Xidmətin İD -sinə uyğun alt xidmətləri gör
     async getSubServicesById(serviceId: string): Promise<SelectedService | null> {
         return this.selectedServiceModel.findById(serviceId);
+    }
+
+
+    // Ümumi xidmətləri əldə etmək üçün metod
+    async getAllServices(): Promise<Service[]> {
+        return this.serviceModel.find();
     }
 
 
@@ -42,11 +53,32 @@ export class BarberService {
     }
 
 
+    // Bərbər xidmətini silir
+    async deleteMyService(_id: string): Promise<SelectedService | messageResponse> {
+        const deletedService = await this.selectedServiceModel.findByIdAndDelete(_id);
+        if (!deletedService) {
+            return { message: 'Xidmət tapılmadı' };
+        }
+        return deletedService;
+    }
 
-    // Ümumi xidmətləri əldə etmək üçün metod
-    // Bərbər xidməti özündən deaktiv edə bilər
+
     // Bərbərləri görə bilir
+    async getAllBarbers(): Promise<Barber[]> {
+        return this.barberModel.find();
+    }
+
+
     // Bərbər öz və digər bərbərlərin profilini görə bilir
+    async getBarberProfile(barberId: string): Promise<Barber | messageResponse> {
+        const barber = await this.barberModel.findById(barberId);
+        if (!barber) {
+            return { message: 'Bərbər tapılmadı' };
+        }
+        return barber;
+    }
+
+
     // Bərbər xidmət növünə uyğun axtarış edə bilir məsələn: saç, saqqal, üz baxımı və s.
     // Filter edə bilir kateqoriya,reytinq və məsafə
 
